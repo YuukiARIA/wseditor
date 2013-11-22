@@ -48,6 +48,16 @@ public class WSEditor extends JPanel
 		setPreferredSize(new Dimension(400, 300));
 	}
 
+	public void setText(String s)
+	{
+		editorPane.setText(s);
+	}
+
+	public String getText()
+	{
+		return editorPane.getText();
+	}
+
 	private void updateLineColumnStatus()
 	{
 		LineColumn lc = editorPane.getLineColumn();
