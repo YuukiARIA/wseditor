@@ -75,32 +75,35 @@ public class Translator
 
 	private void gencode(List<String> code, Inst inst)
 	{
+		String s = "";
+		if (inst != Inst.LABEL)
+		{
+			s += inst;
+		}
 		switch (inst)
 		{
-		case ADD: case SUB: case MUL: case DIV: case MOD: case HALT: case DUP: case SWAP: case POP:
-		case GETC: case GETI: case PUTC: case PUTI:
-		case LOAD: case STORE: case RET:
-			code.add("\t" + inst);
-			break;
-		case PUSH: case COPY: case SLIDE:
-			BigInteger n = readNumber();
-			code.add("\t" + inst + " " + n);
-			break;
-		case CALL: case JMP: case JZ: case JNEG:
-		{
-			String label = readToLF();
-			code.add("\t" + inst + " L" + label);
-			break;
+			case PUSH: case COPY: case SLIDE:
+			{
+				BigInteger n = readNumber();
+				s += " " + n;
+				break;
+			}
+			case CALL: case JMP: case JZ: case JNEG:
+			{
+				String label = readToLF();
+				s += " L" + label;
+				break;
+			}
+			case LABEL:
+			{
+				String label = readToLF();
+				s += "L" + label + ":";
+				break;
+			}
+			default:
+				break;
 		}
-		case LABEL:
-		{
-			String label = readToLF();
-			code.add("L" + label + ":");
-			break;
-		}
-		default:
-			break;
-		}
+		code.add(s);
 	}
 
 	private String readToLF()
