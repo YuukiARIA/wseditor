@@ -1,11 +1,12 @@
 package wseditor.gui.editor;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,6 +29,13 @@ public class WSEditor extends JPanel
 		add(scroll, BorderLayout.CENTER);
 
 		status = new JLabel("#");
+		status.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createEmptyBorder(2, 2, 2, 2),
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(1, 1, 0, 0, Color.LIGHT_GRAY),
+				BorderFactory.createMatteBorder(0, 0, 1, 1, Color.WHITE)
+			)
+		));
 		add(status, BorderLayout.SOUTH);
 
 		editorPane.addCaretListener(new CaretListener()
@@ -44,8 +52,6 @@ public class WSEditor extends JPanel
 				updateLineColumnStatus();
 			}
 		});
-
-		setPreferredSize(new Dimension(400, 300));
 	}
 
 	public void setText(String s)
