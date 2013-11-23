@@ -16,12 +16,17 @@ import javax.swing.KeyStroke;
 
 import wseditor.gui.editor.WSEditor;
 import wseditor.translator.Translator;
+import wseditor.translator.exception.TranslateException;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel
 {
 	private WSEditor editor;
 	private JTextArea codePane;
+	private OutputPane outputPane;
+
+	private JSplitPane splitH;
+	private JSplitPane splitV;
 
 	public MainPanel()
 	{
@@ -30,7 +35,6 @@ public class MainPanel extends JPanel
 		editor = new WSEditor();
 
 		codePane = new JTextArea();
-		JScrollPane sp2 = new JScrollPane(codePane);
 
 		editor.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "translate");
 		editor.getActionMap().put("translate", new AbstractAction()
@@ -41,18 +45,30 @@ public class MainPanel extends JPanel
 				try
 				{
 					List<String> code = translator.translate();
-					codePane.setText(code.toString().replace(",", "\n").replace("[", "").replace("]", ""));
+					codePane.setText(code.toString().replaceAll(",\\s*", "\n").replace("[", "").replace("]", ""));
 				}
-				catch (Exception ex)
+				catch (TranslateException ex)
 				{
-					ex.printStackTrace();
+					outputPane.printError("Error: " + ex.getMessage());
 				}
 			}
 		});
 
-		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, sp2);
-		split.setContinuousLayout(true);
+		splitH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, new JScrollPane(codePane));
+		splitH.setResizeWeight(0.8);
+		splitH.setContinuousLayout(true);
 
-		add(split, BorderLayout.CENTER);
+		outputPane = new OutputPane();
+		//output.setEditable(false);
+		splitV = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitH, outputPane);
+		splitV.setResizeWeight(1.0);
+
+		add(splitV, BorderLayout.CENTER);
+	}
+
+	public void initializeSplitDiviers()
+	{
+		splitV.setDividerLocation(0.8);
+		splitH.setDividerLocation(0.8);
 	}
 }
